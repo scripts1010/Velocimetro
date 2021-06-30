@@ -1,0 +1,459 @@
+<div id="conteinerA" class="container A">
+    <svg class="typeRange" height="165" width="330" view-box="0 0 330 165">
+
+        <g class="scale" stroke="red"></g>
+
+        <path class="outline" d="" />
+        <path class="fill" d="" />
+        <path class="fill2" d="" />
+        <path class="fill3" d="" />
+        <path class="fill4" d="" />
+        <polygon class="needle" points="220,10 300,210 220,250 140,210" />
+    </svg>
+    <div class="output">30</div>
+
+    <style>
+        /*GREENS: #4ac4ac, #399988, #0f4534, #0a1a17;*/
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            margin: 0px auto;
+            /* background-color: #0a1a17; */
+            font-family: Verdana, Geneva, sans-serif;
+            font-size: 16px;
+            color: #ccc;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-align: center;
+        }
+
+        .container {
+            position: relative;
+            margin: 100px auto 50px auto;
+            height: 165px;
+            width: 330px;
+        }
+
+        .A {
+            font-size: 1.2em;
+        }
+
+        .output {
+            line-height: 35px;
+            width: 60px;
+            height: 30px;
+            background-color: rgb(0, 0, 0);
+            color: #aaa;
+            border-radius: 60px 60px 0 0;
+            position: absolute;
+            top: 135px;
+            left: 135px;
+            text-align: center;
+        }
+
+        .initialValue {
+            border: none;
+            border-bottom: 1px solid #399988;
+            color: #399988;
+            display: block;
+            width: 3em;
+            background-color: transparent;
+            margin: 1em auto;
+            outline: none;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /*SVG*/
+
+        svg {
+            margin: 0px;
+            padding: 0;
+            cursor: pointer;
+            /* border: 1px solid #0a1a17; */
+        }
+
+        .outline,
+        .fill,
+        .center,
+        .needle,
+        .scale,
+        .output {
+            pointer-events: none;
+        }
+
+        .outline {
+            fill: #0f4534;
+        }
+
+        .fill {
+            fill: #399988;
+        }
+
+        .fill2 {
+            fill: navy;
+        }
+
+        .needle {
+            fill: #48e;
+        }
+
+        .scale {
+            stroke: rgb(0, 0, 0);
+        }
+
+        text {
+            text-anchor: middle;
+            dominant-baseline: alphabetic;
+            font: 16px verdana, sans-serif;
+            fill: #000;
+        }
+    </style>
+
+    <script>
+
+
+        window.addEventListener("load", function () {
+            document.getElementById("conteinerA").style.display = "none";
+            setTimeout(function () {
+                document.getElementById("conteinerA").style.display = "";
+
+                try {
+                    var drawScale = function drawScale() {
+                        sr1 = r1 + 5;
+                        sr2 = r2 - 5;
+                        srT = r1 + 20;
+                        var scale = document.querySelector(".scale");
+                        clearRect(scale);
+                        var n = 0;
+                        // let cantEspacios=maximo<90?(1800/maximo):(18);
+                        // console.log(cantEspacios);
+                        // let var1=maximo/100>1?maximo/100:1;
+                        //Aca se modifica la escala:
+                        // for (var sa = -180; sa <= 0; sa += cantEspacios) {
+
+                        for (var sa = -180; sa <= 0; sa += 18) {
+                            //dibuja cada linea de la escala:
+                            var sx1 = cx + sr1 * 1.0 * Math.cos(sa * rad);
+                            var sy1 = cy + sr1 * 1.0 * Math.sin(sa * rad);
+                            var sx2 = cx + sr2 * Math.cos(sa * rad);
+                            var sy2 = cy + sr2 * Math.sin(sa * rad);
+                            var sxT = cx + srT * Math.cos(sa * rad);
+                            var syT = cy + srT * Math.sin(sa * rad);
+                            var scaleLine = document.createElementNS(NS, "line");
+                            var scaleLineObj = {
+                                "class": "scale",
+                                x1: sx1,
+                                y1: sy1,
+                                x2: sx2,
+                                y2: sy2
+                            }; // console.log("cordenadas: ",scaleLineObj);
+
+                            setSVGAttributes(scaleLine, scaleLineObj);
+                            scale.appendChild(scaleLine); //aca se define el texto de la escala
+
+                            var scaleText = document.createElementNS(NS, "text");
+                            var scaleTextObj = {
+                                "class": "scale",
+                                x: sxT,
+                                y: syT
+                            };
+                            setSVGAttributes(scaleText, scaleTextObj); //con el numero define a cuanto equivale cada punto de la escala
+
+                            valorIndicador = n * 10 * (maximo - minimo) / 100 + minimo; //si el num tiene decimales los recorta a solo 2:
+
+                            if (valorIndicador.toFixed(2) - Math.floor(valorIndicador) > 0) scaleText.textContent = valorIndicador.toFixed(2); else scaleText.textContent = valorIndicador; // console.log(scaleText.textContent.slice(0,5));
+                            // scaleText.textContent = n * 10 * var1 ;
+
+                            scale.appendChild(scaleText);
+                            n++;
+                        }
+
+                        dibujarCotas();
+                    };
+
+                    var dibujarCotas = function dibujarCotas() {
+                        sr1 = r1 + 5;
+                        sr2 = r2 - 5;
+                        srT = r1 + 20;
+                        var scale = document.querySelector(".scale"); //let arr=[cotaInf,cotaSup]
+
+                        [meta].forEach(function (sa, index) {
+                            sa = (sa - minimo) * 180 / (maximo - minimo) - 180;
+
+                            console.log(sa);
+                            var sx1 = cx + sr1 * 1 * Math.cos(sa * rad);
+                            var sy1 = cy + sr1 * 1 * Math.sin(sa * rad);
+                            var sx2 = cx + sr2 * 0.95 * Math.cos(sa * rad);
+                            var sy2 = cy + sr2 * 0.95 * Math.sin(sa * rad);
+                            var sxT = cx + srT * 0.5 * Math.cos(sa * rad);
+                            var syT = cy + srT * 0.5 * Math.sin(sa * rad);
+                            var scaleLine = document.createElementNS(NS, "line");
+                            var scaleLineObj = {
+                                "class": "scale",
+                                x1: sx1,
+                                y1: sy1,
+                                x2: sx2,
+                                y2: sy2
+                            }; // console.log("cordenadas: ",scaleLineObj);
+
+                            setSVGAttributes(scaleLine, scaleLineObj);
+                            scale.appendChild(scaleLine); //aca se define el texto de la escala
+
+                            var scaleText = document.createElementNS(NS, "text");
+                            var scaleTextObj = {
+                                "class": "scale",
+                                x: sxT,
+                                y: syT
+                            };
+                            setSVGAttributes(scaleText, scaleTextObj);
+                            if (index == 0) scaleText.textContent = "M";
+                            scale.appendChild(scaleText);
+                        });
+                    };
+
+                    var asignarColor = function asignarColor(id) {
+                        if (!document.querySelector(id)) return "none";
+                        var color = document.querySelector(id).alt;
+
+                        switch (color) {
+                            case "Rojo":
+                                return "#f83333";
+
+                            case "Amarillo":
+                                return "rgb(242, 255, 54)";
+
+                            case "Verde":
+                                return "#0fff2f";
+
+                            default:
+                                return "black";
+                        }
+                    };
+
+                    var asignarValor = function asignarValor(id) {
+                        console.log("test");
+
+                        if (document.querySelector(id)) {
+                            if (document.querySelector(id).textContent) {
+                                return parseFloat(document.querySelector(id).textContent.replace(",", ".")) || false;
+                            }
+                        } else {
+                            throw new Error("asignarValor: 'id' no encontrado ");
+                        }
+
+                        return false;
+                    };
+
+                    var drawInput = function drawInput(cx, cy, r1, offset, delta, a) {
+                        drawScale();
+                        outline.setAttributeNS(null, "d", getD1(cx, cy, r1, offset, delta));
+                        outline.style.cssText = "fill: ".concat(color5, " ");
+
+                        if (!isNaN(cuartoUmbralFin) && cuartoUmbralFin !== false) {
+                            fill.setAttributeNS(null, "d", getD2(cx, cy, r1, offset, delta, (cuartoUmbralFin - minimo) * 180 / (maximo - minimo) - 180));
+                            fill.style.cssText = "fill: ".concat(color4, " ");
+                        }
+
+                        if (!isNaN(tercerUmbralFin) && tercerUmbralFin !== false) {
+                            var d3 = getD2(cx, cy, r1, offset, delta, (tercerUmbralFin - minimo) * 180 / (maximo - minimo) - 180);
+                            fill2.setAttributeNS(null, "d", d3);
+                            fill2.style.cssText = "fill: ".concat(color3, " ");
+                        }
+
+                        if (!isNaN(segundoUmbralFin) && segundoUmbralFin !== false) {
+                            var d4 = getD2(cx, cy, r1, offset, delta, (segundoUmbralFin - minimo) * 180 / (maximo - minimo) - 180);
+                            fill3.setAttributeNS(null, "d", d4);
+                            fill3.style.cssText = "fill: ".concat(color2);
+                        }
+
+                        if (!isNaN(primerUmbralFin) && primerUmbralFin !== false) {
+                            var d5 = getD2(cx, cy, r1, offset, delta, (primerUmbralFin - minimo) * 180 / (maximo - minimo) - 180);
+                            fill4.setAttributeNS(null, "d", d5);
+                            fill4.style.cssText = "fill: ".concat(color1, " ");
+                        }
+
+                        drawNeedle(cx, cy, r1, a);
+                    };
+
+                    var updateInput = function updateInput(p, cx, cy, r1, offset, delta) {
+                        var x = p.x;
+                        var y = p.y;
+                        var lx = cx - x;
+                        var ly = cy - y; /////////////////////////////////////////////////
+
+                        var a = Math.atan2(ly, lx) / rad - 180;
+                        drawInput(cx, cy, r1, offset, delta, a); //output.innerHTML = Math.round((a + 180) / 1.8);
+                        //imprime el valor en el centro 
+
+                        if (saveValue.toFixed(2) - Math.floor(saveValue) > 0) output.innerHTML = saveValue.toFixed(2); else output.innerHTML = saveValue;
+                        initialValue = Math.round((a + 180) / 1.8);
+                    };
+
+                    var getD1 = function getD1(cx, cy, r1, offset, delta) {
+                        var x1 = cx + r1,
+                            y1 = cy;
+                        var x2 = offset,
+                            y2 = cy;
+                        var r2 = r1 - delta;
+                        var x3 = x1 - delta,
+                            y3 = cy;
+                        var d1 = "M " + x1 + ", " + y1 + " A" + r1 + "," + r1 + " 0 0 0 " + x2 + "," + y2 + " H" + (offset + delta) + " A" + r2 + "," + r2 + " 0 0 1 " + x3 + "," + y3 + " z";
+                        return d1;
+                    };
+
+                    var getD2 = function getD2(cx, cy, r1, offset, delta, a) {
+                        a *= rad;
+                        var r2 = r1 - delta;
+                        var x4 = cx + r1 * Math.cos(a);
+                        var y4 = cy + r1 * Math.sin(a);
+                        var x5 = cx + r2 * Math.cos(a);
+                        var y5 = cy + r2 * Math.sin(a);
+                        var d2 = "M " + x4 + ", " + y4 + " A" + r1 + "," + r1 + " 0 0 0 " + x2 + "," + y2 + " H" + (offset + delta) + " A" + r2 + "," + r2 + " 0 0 1 " + x5 + "," + y5 + " z";
+                        return d2;
+                    };
+
+                    var drawNeedle = function drawNeedle(cx, cy, r1, a) {
+                        var nx1 = cx + 5 * Math.cos((a - 90) * rad);
+                        var ny1 = cy + 5 * Math.sin((a - 90) * rad);
+                        var nx2 = cx + (r1 + 15) * Math.cos(a * rad);
+                        var ny2 = cy + (r1 + 15) * Math.sin(a * rad);
+                        var nx3 = cx + 5 * Math.cos((a + 90) * rad);
+                        var ny3 = cy + 5 * Math.sin((a + 90) * rad);
+                        var points = nx1 + "," + ny1 + " " + nx2 + "," + ny2 + " " + nx3 + "," + ny3;
+                        needle.setAttributeNS(null, "points", points);
+                    };
+
+                    var clearRect = function clearRect(node) {
+                        while (node.firstChild) {
+                            node.removeChild(node.firstChild);
+                        }
+                    };
+
+                    var setSVGAttributes = function setSVGAttributes(elmt, oAtt) {
+                        for (var prop in oAtt) {
+                            elmt.setAttributeNS(null, prop, oAtt[prop]);
+                        }
+                    }; // events
+
+
+                    // var containersRy = document.querySelector(".container");
+                    // var svg = document.querySelector(".typeRange");
+                    // var output = document.querySelector(".output");
+                    // var outline = document.querySelector(".outline");
+                    // var fill = document.querySelector(".fill");
+                    // var fill2 = document.querySelector(".fill2");
+                    // var fill3 = document.querySelector(".fill3");
+                    // var fill4 = document.querySelector(".fill4");
+                    // var center = document.querySelector(".center");
+                    // var needle = document.querySelector(".needle");
+                    // var initialValue = asignarValor("#master_DefaultContent_rts_s8264_f27865c");
+                    // var cotaInf =asignarValor("#master_DefaultContent_rts_s8264_f24061c");
+                    // var cotaSup = asignarValor("#master_DefaultContent_rts_s8264_f25447c");
+
+                    // var primerUmbralFin =  asignarValor("#master_DefaultContent_rts_s8263_f27782c");
+                    // var segundoUmbralFin =asignarValor("#master_DefaultContent_rts_s8263_f27784c");
+                    // var tercerUmbralFin =asignarValor("#master_DefaultContent_rts_s8263_f27786c");
+                    // var cuartoUmbralFin =asignarValor("#master_DefaultContent_rts_s8263_f27788c");
+                    // var quintoUmbralFin =asignarValor("#master_DefaultContent_rts_s8263_f27790c");
+
+                    // console.log(primerUmbralFin, segundoUmbralFin, tercerUmbralFin, cuartoUmbralFin, quintoUmbralFin);
+                    // var color1 = asignarColor("#master_DefaultContent_rts_s8263_f25440c > ul > li > div > div > img");
+                    // var color2 =  asignarColor("#master_DefaultContent_rts_s8263_f25441c > ul > li > div > div > img");
+                    // var color3 = asignarColor("#master_DefaultContent_rts_s8263_f25442c > ul > li > div > div > img");
+                    // var color4 =asignarColor("#master_DefaultContent_rts_s8263_f25438c > ul > li > div > div > img");
+                    // var color5 = asignarColor("#master_DefaultContent_rts_s8263_f25439c > ul > li > div > div > img"); //TESTING:
+
+                    // var minimo = asignarValor("#master_DefaultContent_rts_s8263_f27781c");
+
+                    var containersRy = document.querySelector(".container");
+                    var svg = document.querySelector(".typeRange");
+                    var output = document.querySelector(".output");
+                    var outline = document.querySelector(".outline");
+                    var fill = document.querySelector(".fill");
+                    var fill2 = document.querySelector(".fill2");
+                    var fill3 = document.querySelector(".fill3");
+                    var fill4 = document.querySelector(".fill4");
+                    var center = document.querySelector(".center");
+                    var needle = document.querySelector(".needle");
+
+                    // #master_DefaultContent_rts_s8815_f23661c
+                    // #master_DefaultContent_rts_s8815_f23664c
+
+                    // val resultado 
+                    var initialValue = asignarValor("#master_DefaultContent_rts_s8815_f30407c");
+                    var cotaInf = asignarValor("#master_DefaultContent_rts_s8815_f23666c");
+                    var cotaSup = asignarValor("#master_DefaultContent_rts_s8815_f23683c");
+                    // meta
+                    var meta = asignarValor("#master_DefaultContent_rts_s8815_f27891c");
+
+
+                    var primerUmbralFin = asignarValor("#master_DefaultContent_rts_s8814_f27905c");
+                    var segundoUmbralFin = asignarValor("#master_DefaultContent_rts_s8814_f27907c");
+                    var tercerUmbralFin = asignarValor("#master_DefaultContent_rts_s8814_f27909c");
+                    var cuartoUmbralFin = asignarValor("#master_DefaultContent_rts_s8814_f27911c");
+                    var quintoUmbralFin = asignarValor("#master_DefaultContent_rts_s8814_f27913c");
+
+
+                    var color1 = asignarColor("#master_DefaultContent_rts_s8814_f23676c > ul > li > div > div > img");
+                    var color2 = asignarColor("#master_DefaultContent_rts_s8814_f23677c > ul > li > div > div > img");
+                    var color3 = asignarColor("#master_DefaultContent_rts_s8814_f23678c > ul > li > div > div > img");
+                    var color4 = asignarColor("#master_DefaultContent_rts_s8814_f23674c > ul > li > div > div > img");
+                    var color5 = asignarColor("#master_DefaultContent_rts_s8814_f23675c > ul > li > div > div > img");
+
+                    //TESTING:
+                    var minimo = asignarValor("#master_DefaultContent_rts_s8814_f27904c");
+
+
+                    var maximo = [quintoUmbralFin, cuartoUmbralFin, tercerUmbralFin, segundoUmbralFin, primerUmbralFin].sort(function (a, b) {
+                        return b - a;
+                    })[0];
+                    cotaSup = cotaSup > maximo ? maximo : cotaSup;
+                    cotaInf = cotaInf > maximo ? maximo : cotaInf;
+
+                    cotaSup = cotaSup < minimo ? minimo : cotaSup;
+                    cotaInf = cotaInf < minimo ? minimo : cotaInf;
+                    var rad = Math.PI / 180;
+                    var NS = "http:\/\/www.w3.org/2000/svg";
+                    var W = parseInt(window.getComputedStyle(svg, null).getPropertyValue("width"));
+                    var offset = 40;
+                    var cx = ~~(W / 2);
+                    var cy = 160;
+                    var saveValue = initialValue;
+                    var r1 = cx - offset;
+                    var delta = ~~(r1 / 4); //~ es un negador, al negar dos veces es como si hicieran Math.floor
+
+                    var x1 = cx + r1;
+                    y1 = cy;
+                    var r2 = r1 - delta;
+                    var x2 = offset,
+                        y2 = cy;
+                    var x3 = x1 - delta,
+                        y3 = cy;
+
+                    if (initialValue > maximo) {
+                        initialValue = maximo;
+                        var pa = initialValue * 180 / maximo - 180;
+                    } else {
+                        var pa = (initialValue - minimo) * 180 / (maximo - minimo) - 180;
+                    }
+
+                    var p = {};
+                    p.x = cx + r1 * Math.cos(pa * rad);
+                    p.y = cy + r1 * Math.sin(pa * rad);
+                    updateInput(p, cx, cy, r1, offset, delta);
+                } catch (error) {
+                    document.getElementById("conteinerA").style.display = "none";
+                    throw new Error(error.message);
+                }
+            }, 1000);
+        }, false);
+    </script>
+</div>
